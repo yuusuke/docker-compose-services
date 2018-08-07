@@ -1,0 +1,8 @@
+gitbucket:
+  image: takezoe/gitbucket
+  ports:
+    - {{gitbucket_port}}:8080 # ポートは好きなポートに
+  volumes:
+    - {{gitbucket_home}}:/gitbucket
+  restart: always
+

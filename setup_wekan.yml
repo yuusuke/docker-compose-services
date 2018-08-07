@@ -1,0 +1,24 @@
+- hosts: wekan
+  user: root
+  become: no
+
+  tasks:
+    - file:
+        path: /opt/compose/wekan
+        state: directory
+
+    - name: install docker-compose wekan file
+      template:
+        src: service/wekan/docker-compose.yml.j2
+        dest: /opt/compose/wekan/docker-compose.yml
+
+    - copy:
+        src: dc@.service
+        dest: /usr/lib/systemd/system/dc@.service
+
+    - name: start and enabled wekan service
+      systemd:
+        name: dc@wekan
+        enabled: yes
+        state: started
+

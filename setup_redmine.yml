@@ -1,0 +1,24 @@
+- hosts: redmine
+  user: root
+  become: no
+
+  tasks:
+    - file:
+        path: /opt/compose/redmine
+        state: directory
+
+    - name: install docker-compose redmine file
+      template:
+        src: service/redmine/docker-compose.yml.j2
+        dest: /opt/compose/redmine/docker-compose.yml
+
+    - copy:
+        src: dc@.service
+        dest: /usr/lib/systemd/system/dc@.service
+
+    - name: start and enabled redmine service
+      systemd:
+        name: dc@redmine
+        enabled: yes
+        state: started
+

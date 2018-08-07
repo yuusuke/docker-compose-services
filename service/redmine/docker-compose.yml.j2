@@ -1,0 +1,8 @@
+redmine:
+  image: redmine:latest
+  ports:
+    - {{redmine_port}}:3000 # ポートは好きなポートに
+  volumes:
+    - {{redmine_home}}:/usr/src/redmine
+    - /data/gitbucket/repositories:/usr/src/redmine/repos
+  restart: always
