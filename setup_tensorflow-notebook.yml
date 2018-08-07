@@ -1,0 +1,30 @@
+- hosts: tensorflow_notebook
+  user: root
+  become: no
+
+  tasks:
+    - file:
+        path: /data/tensorflow-notebook
+        owner: "{{tensorflow_notebook_uid}}"
+        group: "{{tensorflow_notebook_gid}}"
+        state: directory
+
+    - file:
+        path: /opt/compose/tensorflow-notebook
+        state: directory
+
+    - name: install docker-compose tensorflow-notebook file
+      template:
+        src: service/tensorflow-notebook/docker-compose.yml.j2
+        dest: /opt/compose/tensorflow-notebook/docker-compose.yml
+
+    - copy:
+        src: dc@.service
+        dest: /usr/lib/systemd/system/dc@.service
+
+    - name: start and enabled tensorflow-notebook service
+      systemd:
+        name: dc@tensorflow-notebook
+        enabled: yes
+        state: started
+

@@ -1,0 +1,12 @@
+tensorflow-notebook:
+  image: jupyter/tensorflow-notebook
+  ports:
+    - {{tensorflow_notebook_port}}:8888 # ポートは好きなポートに
+  volumes:
+    - {{tensorflow_notebook_home}}:/home/jovyan/work
+    - {{tensorflow_notebook_conda}}:/opt/conda/jupyter
+  environment:
+    - NB_UID={{tensorflow_notebook_uid}}
+    - NB_GID={{tensorflow_notebook_gid}}
+  restart: always
+
