@@ -7,6 +7,33 @@
         path: /opt/compose/redmine
         state: directory
 
+    - file:
+        path: "{{redmine_home}}"
+        state: directory
+
+    - shell: docker run --rm --entrypoint tar redmine  cf - . | (cd {{redmine_home}}; tar xvf -)
+#    - docker_container:
+#        name: redmine
+#        image: docker.io/redmine
+#        entrypoint: tar
+#        command: cf - . | (cd {{redmine_home}}; tar xvf -)
+
+    - unarchive:
+        src: https://ipafont.ipa.go.jp/old/ipafont/IPAfont00303.php
+        dest: "{{redmine_home}}"
+        remote_src: yes
+
+    - copy:
+        src: "{{redmine_home}}/config/configuration.yml.example"
+        dest: "{{redmine_home}}/config/configuration.yml"
+        remote_src: yes
+
+    - lineinfile:
+        path: "{{redmine_home}}/config/configuration.yml"
+        regexp: "^  rmagick_font_path:$"
+        insertafter: "^#  rmagick_font_path:"
+        line: "  rmagick_font_path: ./IPAfont00303/ipag.ttf"
+
     - name: install docker-compose redmine file
       template:
         src: service/redmine/docker-compose.yml.j2
@@ -21,4 +48,8 @@
         name: dc@redmine
         enabled: yes
         state: started
+
+    - wait_for:
+        port: "{{redmine_port}}"
+        state: present
 
