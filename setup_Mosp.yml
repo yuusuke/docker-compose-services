@@ -1,0 +1,36 @@
+- hosts: Mosp
+  user: root
+  become: no
+
+  tasks:
+    - file:
+        path: /opt/compose/Mosp
+        state: directory
+
+    - name: install docker-compose file
+      template:
+        src: service/Mosp/docker-compose.yml.j2
+        dest: /opt/compose/Mosp/docker-compose.yml
+
+    - copy:
+        src: "{{item}}"
+        dest: /opt/compose/Mosp/
+      with_items:
+        - service/Mosp/app
+        - service/Mosp/web
+
+    - name: get Mosp war
+      get_url:
+        url: "https://ja.osdn.net/frs/redir.php?m=ymu&f=mosp%2F70417%2Ftime4.war"
+        dest: /opt/compose/Mosp/app/time4.war
+
+    - copy:
+        src: dc@.service
+        dest: /usr/lib/systemd/system/dc@.service
+
+    - name: start and enabled service
+      systemd:
+        name: dc@Mosp
+        enabled: yes
+        state: started
+
